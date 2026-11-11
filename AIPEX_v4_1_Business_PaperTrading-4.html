@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIPEX v4.1 — AI Business & Paper Trading</title>
+<style>
+:root{--bg:#0b1220;--panel:#121d30;--panel2:#17243a;--line:#2a3a53;--text:#edf4ff;--muted:#a5b4ca;--green:#43d6a0;--red:#ff737d;--gold:#f5c45e;--blue:#76b7ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#08101d,#0d1a2b 60%,#10172a);color:var(--text);font-family:system-ui,-apple-system,"Noto Nastaliq Urdu",Arial,sans-serif;line-height:1.55}
+header{padding:22px 16px 18px;border-bottom:1px solid var(--line);background:#0b1423d9;position:sticky;top:0;z-index:3;backdrop-filter:blur(12px)}
+.wrap{max-width:1180px;margin:auto;padding:0 14px}.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#58e3b1,#5a9cff);color:#07111f;font-weight:900;font-size:19px}.brand h1{font-size:22px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.pill{display:inline-flex;border:1px solid var(--line);padding:4px 9px;border-radius:999px;color:var(--muted);font-size:12px;gap:5px;align-items:center}
+.notice{margin:16px 0;background:#332b19;border:1px solid #68572e;color:#ffe4a1;padding:12px 14px;border-radius:12px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;margin:14px 0}.card{grid-column:span 12;background:linear-gradient(145deg,var(--panel),#101a2b);border:1px solid var(--line);border-radius:16px;padding:15px;min-width:0}.half{grid-column:span 6}.third{grid-column:span 4}.quarter{grid-column:span 3}
+h2{font-size:16px;margin:0 0 12px}h3{font-size:14px;margin:0 0 7px}.muted{color:var(--muted);font-size:13px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.metric{background:var(--panel2);border:1px solid var(--line);padding:12px;border-radius:12px}.metric .label{color:var(--muted);font-size:12px}.metric strong{display:block;font-size:20px;margin-top:4px;direction:ltr;text-align:right}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+button,select,input{background:#0b1525;color:var(--text);border:1px solid #344762;border-radius:10px;padding:10px 12px;font:inherit;font-size:13px}button{cursor:pointer;font-weight:700}button.primary{background:linear-gradient(120deg,#54d9a6,#6daaff);border:0;color:#061323}button:disabled{opacity:.45;cursor:not-allowed}.check{display:flex;gap:7px;align-items:center;font-size:13px;color:var(--muted)}.check input{width:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:right;padding:9px 7px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}td{overflow-wrap:anywhere}.tag{padding:3px 7px;border-radius:7px;font-size:11px;display:inline-block;background:#25354d}.up{color:var(--green)}.down{color:var(--red)}.warn{color:var(--gold)}.bar{height:8px;background:#26364c;border-radius:99px;overflow:hidden;margin-top:6px}.bar span{height:100%;display:block;background:linear-gradient(90deg,#4ed8a2,#77b7ff)}
+#chart{width:100%;height:210px;display:block;background:#0c1727;border:1px solid var(--line);border-radius:12px}
+.log{max-height:230px;overflow:auto}.empty{color:var(--muted);padding:16px;text-align:center}.small{font-size:12px}.footer{color:var(--muted);font-size:12px;padding:10px 0 30px}.status{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--gold);margin-left:5px}.status.ok{background:var(--green)}.status.bad{background:var(--red)}
+@media(max-width:760px){.half,.third,.quarter{grid-column:span 12}.metrics{grid-template-columns:repeat(2,1fr)}header{position:static}.brand h1{font-size:19px}table{font-size:12px}th,td{padding:8px 4px}}
+</style></head>
+<body>
+<header><div class="wrap brand"><div class="logo">AI</div><div><h1>AIPEX v4.1</h1><p>AI Intelligence Performance Exchange · AI Business + Paper Trading</p></div><div style="margin-right:auto"><span class="pill">● بینک کے بغیر</span></div></div></header>
+<main class="wrap">
+<div class="notice"><b>اہم وضاحت:</b> یہ ریسرچ/پیپر ٹریڈنگ پروٹوٹائپ ہے، مالی مشورہ نہیں۔ اس ورژن میں حقیقی LLM ماڈلز کی API منسلک نہیں؛ “AI ٹیمیں” واضح طور پر تجرباتی، اصولی (rule-based) حکمتِ عملیاں ہیں۔ کوئی حقیقی رقم یا آرڈر استعمال نہیں ہوتا۔</div>
+<section class="grid">
+<div class="card"><div class="row" style="justify-content:space-between"><h2>کنٹرول پینل</h2><span class="pill"><span class="status" id="apiDot"></span><span id="apiStatus">مارکیٹ ڈیٹا چیک نہیں ہوا</span></span></div>
+<div class="controls">
+<select id="symbol"><option value="BTCUSDT">BTC / USDT</option><option value="ETHUSDT">ETH / USDT</option><option value="SOLUSDT">SOL / USDT</option></select>
+<select id="interval"><option value="1m">1 منٹ</option><option value="5m" selected>5 منٹ</option><option value="15m">15 منٹ</option><option value="1h">1 گھنٹہ</option></select>
+<button class="primary" id="refresh">مارکیٹ ڈیٹا لوڈ کریں</button><button id="evaluate">ماڈلز کا جائزہ لیں</button><button id="paper">ایک پیپر ٹریڈ چلائیں</button>
+</div>
+<div class="row"><label class="check"><input id="auto" type="checkbox"> ہر 60 سیکنڈ بعد تازہ ڈیٹا</label><label class="check"><input id="safe" type="checkbox" checked> صرف مضبوط اکثریتی سگنل پر ٹریڈ</label><label class="check"><input id="persist" type="checkbox" checked> نتائج اسی ڈیوائس پر محفوظ کریں</label><button id="reset" style="margin-right:auto">پیپر اکاؤنٹ ری سیٹ</button></div>
+<p class="muted small" id="updated">ڈیٹا لوڈ کرنے کے لیے بٹن دبائیں۔ انٹرنیٹ دستیاب ہونا ضروری ہے۔</p>
+</div>
+<div class="card"><h2>پیپر اکاؤنٹ</h2><div class="metrics">
+<div class="metric"><div class="label">ابتدائی بیلنس</div><strong id="initial">$1,000.00</strong></div>
+<div class="metric"><div class="label">موجودہ ایکویٹی</div><strong id="equity">$1,000.00</strong></div>
+<div class="metric"><div class="label">کل نفع / نقصان</div><strong id="pnl">$0.00</strong></div>
+<div class="metric"><div class="label">مکمل ٹریڈز</div><strong id="trades">0</strong></div>
+</div></div>
+<div class="card half"><div class="row" style="justify-content:space-between"><h2>مارکیٹ چارٹ</h2><span class="pill" id="price">قیمت: —</span></div><canvas id="chart" width="900" height="300"></canvas><p class="muted small">چارٹ عوامی مارکیٹ candles سے بنتا ہے؛ API دستیاب نہ ہو تو چارٹ اپ ڈیٹ نہیں ہوگا۔</p></div>
+<div class="card half"><h2>موجودہ سگنل</h2><div class="metrics" style="grid-template-columns:repeat(2,1fr)">
+<div class="metric"><div class="label">ماڈلز کی اکثریت</div><strong id="consensus" style="font-size:17px">—</strong></div><div class="metric"><div class="label">اعتماد کا اندازہ</div><strong id="confidence">—</strong></div>
+<div class="metric"><div class="label">رسک فی ٹریڈ</div><strong>1%</strong></div><div class="metric"><div class="label">زیادہ سے زیادہ پوزیشن</div><strong>10%</strong></div></div><p class="muted" id="signalNote">پہلے مارکیٹ ڈیٹا لوڈ کریں، پھر ماڈلز کا جائزہ لیں۔</p></div>
+<div class="card"><h2>ماڈلز / حکمتِ عملیوں کی کارکردگی</h2><p class="muted">ہر ماڈل کے سگنل کو محفوظ شدہ آخری فیصلوں اور اگلے دستیاب candle کے نتیجے سے جانچا جائے گا۔ ابتدائی اسکور محض عارضی اندازہ ہے؛ کم نمونے قابلِ اعتماد برتری ثابت نہیں کرتے۔</p>
+<div style="overflow-x:auto"><table><thead><tr><th>حکمتِ عملی</th><th>موجودہ رائے</th><th>اسکور</th><th>درست فیصلے</th><th>نمونے</th><th>کارروائی</th></tr></thead><tbody id="models"></tbody></table></div></div>
+<div class="card half"><h2>ٹریڈ ریکارڈ</h2><div class="log" id="tradeLog"><div class="empty">ابھی کوئی پیپر ٹریڈ نہیں ہوئی۔</div></div></div>
+<div class="card half"><h2>تجربات اور نتیجہ</h2><div id="experiment" class="muted">ڈیٹا اور ماڈلز چلانے کے بعد خلاصہ یہاں آئے گا۔</div><div class="row" style="margin-top:12px"><button id="export">CSV رپورٹ برآمد کریں</button><button id="downloadState">ریکارڈ JSON محفوظ کریں</button></div></div>
+</section>
+
+<div class="card">
+  <div class="row" style="justify-content:space-between;align-items:center">
+    <h2>AIPEX Business Center</h2><span class="pill">کاروباری ماڈل · ابتدائی منصوبہ</span>
+  </div>
+  <p class="muted">AIPEX کی آمدنی صارفین کو مفید AI تجزیاتی ٹولز فراہم کرنے، شفاف نتائج دکھانے اور اداروں کو خدمات دینے سے حاصل کرنے کا منصوبہ ہے۔ یہ قیمتیں صرف مجوزہ نمونے ہیں؛ ادائیگی ابھی منسلک نہیں۔</p>
+  <div class="grid" style="margin-bottom:0">
+    <div class="card third">
+      <h3>Free Research</h3><div style="font-size:24px;font-weight:800">مفت</div>
+      <p class="muted">بنیادی مارکیٹ ڈیٹا، محدود پیپر ٹریڈنگ، بنیادی ماڈل اسکورنگ۔</p>
+      <span class="tag">صارفین کی شروعات</span>
+    </div>
+    <div class="card third" style="border-color:#4b9c91">
+      <h3>Premium</h3><div style="font-size:24px;font-weight:800">قیمت زیرِ فیصلہ</div>
+      <p class="muted">تفصیلی کارکردگی رپورٹس، زیادہ تاریخی تجزیہ، محفوظ شدہ تجربات اور ایڈوانس ڈیش بورڈ۔</p>
+      <span class="tag">ماہانہ سبسکرپشن</span>
+    </div>
+    <div class="card third">
+      <h3>Professional / API</h3><div style="font-size:24px;font-weight:800">حسبِ استعمال</div>
+      <p class="muted">تحقیقی ٹیموں، اداروں اور ڈویلپرز کے لیے رپورٹس اور API رسائی۔</p>
+      <span class="tag">B2B سروس</span>
+    </div>
+  </div>
+  <div class="notice" style="margin-bottom:0">
+    <b>اہم:</b> اس ورژن میں Stripe/PayPal یا کسی ادائیگی گیٹ وے، حقیقی صارف اکاؤنٹس، سرور، یا Premium activation کو فعال نہیں کیا گیا۔ حقیقی سبسکرپشن شروع کرنے سے پہلے محفوظ backend، قیمتوں، شرائط اور ادائیگی فراہم کنندہ کی دستیابی کی تصدیق ضروری ہے۔
+  </div>
+</div>
+
+
+<div class="card" id="revenueLab">
+  <div class="row" style="justify-content:space-between">
+    <h2>Business Revenue Simulator</h2><span class="pill">صرف منصوبہ بندی · حقیقی آمدنی نہیں</span>
+  </div>
+  <p class="muted">اپنے اندازے درج کریں۔ یہ کیلکولیٹر صرف ممکنہ مجموعی ماہانہ آمدنی کا حساب لگاتا ہے؛ یہ صارفین، فروخت یا منافع کی ضمانت نہیں۔ اخراجات، ٹیکس، ادائیگی فیس اور churn اس سادہ تخمینے میں شامل نہیں۔</p>
+  <div class="grid" style="margin-bottom:0">
+    <div class="card third">
+      <label class="muted" for="freeUsers">Free صارفین</label>
+      <input id="freeUsers" type="number" min="0" max="10000000" value="500" style="width:100%">
+      <label class="muted" for="paidUsers" style="display:block;margin-top:8px">Premium صارفین</label>
+      <input id="paidUsers" type="number" min="0" max="1000000" value="25" style="width:100%">
+    </div>
+    <div class="card third">
+      <label class="muted" for="premiumPrice">Premium ماہانہ قیمت (USD)</label>
+      <input id="premiumPrice" type="number" min="0" max="100000" step="0.5" value="5" style="width:100%">
+      <label class="muted" for="proUsers" style="display:block;margin-top:8px">Professional/API صارفین</label>
+      <input id="proUsers" type="number" min="0" max="100000" value="3" style="width:100%">
+    </div>
+    <div class="card third">
+      <label class="muted" for="proPrice">Professional ماہانہ قیمت (USD)</label>
+      <input id="proPrice" type="number" min="0" max="100000" step="1" value="20" style="width:100%">
+      <button class="primary" id="calcRevenue" style="width:100%;margin-top:12px">آمدنی کا تخمینہ لگائیں</button>
+    </div>
+  </div>
+  <div class="metrics" style="margin-top:12px">
+    <div class="metric"><div class="label">Premium آمدنی / ماہ</div><strong id="premiumRevenue">$125.00</strong></div>
+    <div class="metric"><div class="label">Professional آمدنی / ماہ</div><strong id="proRevenue">$60.00</strong></div>
+    <div class="metric"><div class="label">کل مجموعی آمدنی / ماہ</div><strong id="grossRevenue">$185.00</strong></div>
+    <div class="metric"><div class="label">سالانہ مجموعی رفتار</div><strong id="annualRevenue">$2,220.00</strong></div>
+  </div>
+  <p class="muted small" id="revenueNote">نمونہ مفروضوں پر مبنی تخمینہ؛ حقیقی صارفین یا آمدنی کی رپورٹ نہیں۔</p>
+</div>
+
+<div class="card">
+  <h2>AI Model Integration Lab</h2>
+  <p class="muted">موجودہ تین حکمتِ عملیاں تجرباتی rule-based ماڈلز ہیں، حقیقی LLM خدمات نہیں۔ یہاں انضمام کی منصوبہ بندی اور تصدیق الگ رکھی گئی ہے۔</p>
+  <div style="overflow-x:auto">
+    <table>
+      <thead><tr><th>ماڈیول</th><th>حالت</th><th>اگلا کام</th></tr></thead>
+      <tbody>
+        <tr><td>Rule-based strategies</td><td><span class="tag up">موجودہ پروٹوٹائپ میں</span></td><td>زیادہ تاریخی ڈیٹا پر جانچ</td></tr>
+        <tr><td>External AI models</td><td><span class="tag warn">ابھی منسلک نہیں</span></td><td>محفوظ backend اور API کنیکٹر</td></tr>
+        <tr><td>Market data</td><td><span class="tag warn">صارف کے نیٹ ورک پر منحصر</span></td><td>ڈیٹا سورس اور ناکامی کی جانچ</td></tr>
+        <tr><td>Premium billing</td><td><span class="tag warn">ابھی فعال نہیں</span></td><td>قانونی/ادائیگی تیاری کے بعد integration</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2>ترقی کا روڈ میپ</h2>
+  <div class="grid" style="margin-bottom:0">
+    <div class="card third"><h3>مرحلہ 1 — قابلِ اعتماد بنیاد</h3><p class="muted">مارکیٹ ڈیٹا، محفوظ پیپر ٹریڈنگ، ریکارڈ اور CSV/JSON برآمد کی جانچ۔</p></div>
+    <div class="card third"><h3>مرحلہ 2 — حقیقی AI</h3><p class="muted">سرور کے ذریعے AI ماڈلز، یکساں ٹیسٹ اور منصفانہ scoring۔</p></div>
+    <div class="card third"><h3>مرحلہ 3 — کاروبار</h3><p class="muted">لاگ اِن، Premium منصوبے، ادائیگی، صارف سپورٹ اور ادارہ جاتی API۔</p></div>
+  </div>
+</div>
+
+<div class="footer"><b>Project Owner:</b> Noor Zaman — Independent Researcher, Chenab Nagar, Pakistan.<br>AIPEX v4.1 · صرف تعلیمی تجربہ · کرپٹو انتہائی خطرناک اور اتار چڑھاؤ والی مارکیٹ ہے۔ اس پروٹوٹائپ میں حقیقی AI API، حقیقی آرڈر، یا منافع کی ضمانت شامل نہیں۔ حقیقی AI ماڈلز شامل کرنے کے لیے الگ محفوظ سرور، API keys اور اخراجات/شرائط کی جانچ درکار ہوگی۔</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const state={candles:[],price:null,models:[],trades:[],initial:1000,cash:1000,units:0,fee:.001,closed:0,correct:0,lastEvaluated:null,pending:[],notes:[],history:[]};
+const strategies=[
+{id:'trend',name:'Trend Follow',label:'رجحان',desc:'EMA 5 بمقابلہ EMA 13'},
+{id:'momentum',name:'Momentum',label:'رفتار',desc:'آخری چند candles کی سمت'},
+{id:'revert',name:'Mean Reversion',label:'واپسی',desc:'قیمت بمقابلہ مختصر اوسط'}
+];
+function fmt(n,d=2){return Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function loadSaved(){if(!$('persist').checked)return;try{const s=JSON.parse(localStorage.getItem('aipex41')||'null');if(s){state.trades=s.trades||[];state.cash=Number(s.cash??1000);state.units=Number(s.units||0);state.initial=Number(s.initial||1000);state.closed=Number(s.closed||0);state.correct=Number(s.correct||0);state.history=s.history||[];state.pending=s.pending||[];state.notes=s.notes||[]}}catch(e){}}
+function save(){if(!$('persist').checked)return;try{localStorage.setItem('aipex41',JSON.stringify({trades:state.trades,cash:state.cash,units:state.units,initial:state.initial,closed:state.closed,correct:state.correct,history:state.history,pending:state.pending,notes:state.notes}))}catch(e){}}
+async function fetchData(){const symbol=$('symbol').value,interval=$('interval').value;$('refresh').disabled=true;$('apiStatus').textContent='ڈیٹا لوڈ ہو رہا ہے…';$('apiDot').className='status';
+try{let r=null,lastErr=null;for(const base of ['https://data-api.binance.vision','https://api.binance.com','https://api-gcp.binance.com','https://api1.binance.com','https://api2.binance.com','https://api3.binance.com','https://api4.binance.com']){try{r=await fetch(`${base}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=100`);if(r.ok)break;lastErr=Error('HTTP '+r.status+' from '+base);r=null}catch(err){lastErr=err;r=null}}if(!r)throw lastErr||Error('تمام API راستے ناکام ہوئے');const a=await r.json();if(!Array.isArray(a)||!a.length)throw Error('خالی ڈیٹا');state.candles=a.map(x=>({time:x[0],open:+x[1],high:+x[2],low:+x[3],close:+x[4],volume:+x[5]}));state.price=state.candles.at(-1).close;settlePending();$('apiStatus').textContent='عوامی ڈیٹا دستیاب';$('apiDot').className='status ok';$('price').textContent='قیمت: $'+fmt(state.price);$('updated').textContent='آخری اپ ڈیٹ: '+new Date().toLocaleString();drawChart();evaluateModels(false);render();}catch(e){$('apiStatus').textContent='ڈیٹا دستیاب نہیں';$('apiDot').className='status bad';$('updated').textContent='API خرابی: '+e.message+' — ممکن ہے نیٹ ورک ان endpoints تک رسائی روک رہا ہو؛ Chrome/دوسرا انٹرنیٹ آزما کر دوبارہ کوشش کریں۔'}finally{$('refresh').disabled=false}}
+function ema(values,period){let k=2/(period+1),v=values[0];for(let i=1;i<values.length;i++)v=values[i]*k+v*(1-k);return v}
+function getPredictions(){const c=state.candles;if(c.length<20)return strategies.map(s=>({...s,pred:'WAIT',score:50,accuracy:null,n:0,reason:'مزید candles درکار'}));
+const closes=c.slice(0,-1).map(x=>x.close);const short=ema(closes.slice(-24),5),long=ema(closes.slice(-40),13),last=closes.at(-1),prev=closes.at(-5),avg=closes.slice(-20).reduce((a,b)=>a+b,0)/20;
+const raw=[
+{...strategies[0],pred:short>long*1.0005?'BUY':short<long*.9995?'SELL':'WAIT',reason:'EMA 5/13 رجحان'},
+{...strategies[1],pred:last>prev*1.001?'BUY':last<prev*.999?'SELL':'WAIT',reason:'5 candles کی قیمت کی رفتار'},
+{...strategies[2],pred:last<avg*.997?'BUY':last>avg*1.003?'SELL':'WAIT',reason:'20 candles کی اوسط سے انحراف'}
+];
+return raw.map(m=>{const hist=state.history.filter(h=>h.id===m.id);const n=hist.length,correct=hist.filter(h=>h.correct).length;return {...m,n,accuracy:n?correct/n:null,score:n?Math.round((correct+2)/(n+4)*100):50}})}
+function settlePending(){if(!state.candles.length||!state.pending.length)return;const latest=state.candles.at(-1);const remaining=[];for(const p of state.pending){if(latest.time<=p.time){remaining.push(p);continue}const move=(latest.close-p.close)/p.close;for(const m of p.models){const threshold=.00025;let correct=m.pred==='WAIT'?Math.abs(move)<=threshold:m.pred==='BUY'?move>0:move<0;state.history.push({id:m.id,correct,move,pred:m.pred,time:latest.time,symbol:p.symbol})}}state.pending=remaining.slice(-20);save()}
+function evaluateModels(log=true){state.models=getPredictions();const votes={BUY:0,SELL:0,WAIT:0};state.models.forEach(m=>votes[m.pred]++);let winner=Object.entries(votes).sort((a,b)=>b[1]-a[1])[0];let conf=Math.round(winner[1]/state.models.length*100);$('consensus').textContent=winner[0]==='BUY'?'خرید (فرضی)':winner[0]==='SELL'?'فروخت (فرضی)':'انتظار';$('confidence').textContent=conf+'%';$('signalNote').textContent=`${winner[1]} از ${state.models.length} حکمتِ عملیاں ${winner[0]} کہہ رہی ہیں۔ یہ حقیقی AI ماڈلز نہیں اور یہ اتفاق منافع کی ضمانت نہیں۔`;if(log)state.notes.unshift({time:new Date().toISOString(),symbol:$('symbol').value,consensus:winner[0],confidence:conf,models:state.models.map(m=>({id:m.id,pred:m.pred,score:m.score}))});const last=state.candles.at(-1);if(last&&!state.pending.some(p=>p.time===last.time&&p.symbol===$('symbol').value)){state.pending.push({time:last.time,close:last.close,symbol:$('symbol').value,models:state.models.map(m=>({id:m.id,pred:m.pred}))});state.pending=state.pending.slice(-20)}renderModels();renderExperiment();save();return {winner:winner[0],conf}}
+function renderModels(){$('models').innerHTML=state.models.map(m=>`<tr><td><b>${m.name}</b><br><span class="muted">${m.desc}</span></td><td><span class="tag ${m.pred==='BUY'?'up':m.pred==='SELL'?'down':'warn'}">${m.pred}</span></td><td>${m.score}%<div class="bar"><span style="width:${m.score}%"></span></div></td><td>${m.accuracy===null?'—':Math.round(m.accuracy*100)+'%'}</td><td>${m.n}</td><td><button data-model="${m.id}" class="detail">تفصیل</button></td></tr>`).join('');document.querySelectorAll('.detail').forEach(b=>b.onclick=()=>{const m=state.models.find(x=>x.id===b.dataset.model);alert(m.name+'\\n'+m.reason+'\\nسگنل: '+m.pred+'\\nتاریخی نمونے: '+m.n+'\\nاسکور: '+m.score+'%')})}
+function paperTrade(){if(!state.price){alert('پہلے مارکیٹ ڈیٹا لوڈ کریں۔');return}const e=evaluateModels(false);const chosen=state.models.filter(m=>m.pred===e.winner);if(e.winner==='WAIT'||($('safe').checked&&(chosen.length<2||e.conf<66))){alert('محفوظ فلٹر کے مطابق ابھی ٹریڈ نہیں: مضبوط اکثریت درکار ہے۔');return}
+const price=state.price,side=e.winner;let action='WAIT',qty=0,fee=0;
+if(side==='BUY'&&state.units===0){const spend=Math.min(state.cash*.10,state.cash);if(spend<5){alert('پیپر کیش کم ہے۔ ری سیٹ کریں۔');return}qty=(spend*(1-state.fee))/price;fee=spend*state.fee;state.cash-=spend;state.units+=qty;action='BUY'}
+else if(side==='SELL'&&state.units>0){qty=state.units;const gross=qty*price;fee=gross*state.fee;state.cash+=gross-fee;state.units=0;action='SELL'}
+else {alert('سگنل موجود ہے مگر موجودہ پیپر پوزیشن کے مطابق کوئی آرڈر نہیں بنا۔');return}
+state.trades.unshift({time:new Date().toISOString(),symbol:$('symbol').value,action,price,qty,fee,consensus:side,conf:e.conf,cash:state.cash,units:state.units});save();render();renderExperiment()}
+function render(){const equity=state.cash+state.units*(state.price||0),pnl=equity-state.initial;$('equity').textContent='$'+fmt(equity);$('pnl').textContent=(pnl>=0?'+':'')+'$'+fmt(pnl);$('pnl').className=pnl>=0?'up':'down';$('trades').textContent=state.trades.length;$('tradeLog').innerHTML=state.trades.length?'<table><thead><tr><th>وقت</th><th>عمل</th><th>قیمت</th><th>مقدار</th><th>فیس</th></tr></thead><tbody>'+state.trades.slice(0,80).map(t=>`<tr><td>${new Date(t.time).toLocaleString()}</td><td class="${t.action==='BUY'?'up':'down'}">${t.action}</td><td>$${fmt(t.price)}</td><td>${fmt(t.qty,6)}</td><td>$${fmt(t.fee)}</td></tr>`).join('')+'</tbody></table>':'<div class="empty">ابھی کوئی پیپر ٹریڈ نہیں ہوئی۔';renderModels();renderExperiment()}
+function renderExperiment(){const m=state.models||[];if(!m.length)return;const ranked=[...m].sort((a,b)=>b.score-a.score);$('experiment').innerHTML=`<p>اس وقت بہترین ابتدائی اسکور: <b>${ranked[0].name}</b> (${ranked[0].score}%)۔</p><p>یہ اسکور زیادہ تر ابتدائی/چھوٹے نمونوں پر مبنی ہو سکتا ہے؛ اسے مستقبل کی کارکردگی کا ثبوت نہ سمجھیں۔</p><p>ریکارڈ شدہ جائزے: ${state.notes.length} · پیپر ٹریڈز: ${state.trades.length} · موجودہ پوزیشن: ${fmt(state.units,6)} units</p><p class="small">اگلا حقیقی AI مرحلہ API کے ذریعے ہوگا۔ API keys کو اس HTML فائل میں رکھنا محفوظ نہیں؛ اس کے لیے محفوظ backend درکار ہے۔</p>`}
+function drawChart(){const can=$('chart'),ctx=can.getContext('2d'),w=can.width,h=can.height;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#26364b';ctx.lineWidth=1;for(let i=1;i<5;i++){ctx.beginPath();ctx.moveTo(0,h*i/5);ctx.lineTo(w,h*i/5);ctx.stroke()}const c=state.candles.slice(-65);if(!c.length)return;let min=Math.min(...c.map(x=>x.low)),max=Math.max(...c.map(x=>x.high));if(max===min)max=min+1;const x=i=>i*(w-20)/(c.length-1)+10,y=v=>h-15-(v-min)/(max-min)*(h-30);ctx.strokeStyle='#6db5ff';ctx.lineWidth=2;ctx.beginPath();c.forEach((v,i)=>i?ctx.lineTo(x(i),y(v.close)):ctx.moveTo(x(i),y(v.close)));ctx.stroke();ctx.fillStyle='#a5b4ca';ctx.font='13px Arial';ctx.fillText('$'+fmt(max),8,15);ctx.fillText('$'+fmt(min),8,h-5)}
+function reset(){if(!confirm('پیپر اکاؤنٹ اور اس کی ٹریڈ ہسٹری ری سیٹ کریں؟'))return;state.cash=1000;state.units=0;state.initial=1000;state.trades=[];state.history=[];state.pending=[];state.notes=[];state.closed=0;state.correct=0;save();render()}
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+function calculateRevenue(){
+  const read=id=>Math.max(0,Math.min(10000000,Number($(id).value)||0));
+  const paid=read('paidUsers'),premium=read('premiumPrice'),pro=read('proUsers'),proPrice=read('proPrice');
+  const a=paid*premium,b=pro*proPrice,total=a+b;
+  $('premiumRevenue').textContent='$'+fmt(a);
+  $('proRevenue').textContent='$'+fmt(b);
+  $('grossRevenue').textContent='$'+fmt(total);
+  $('annualRevenue').textContent='$'+fmt(total*12);
+  $('revenueNote').textContent=`مفروضہ: ${read('freeUsers').toLocaleString()} مفت، ${paid.toLocaleString()} Premium اور ${pro.toLocaleString()} Professional صارفین۔ یہ gross revenue ہے، خالص منافع نہیں۔`;
+}
+$('calcRevenue').onclick=calculateRevenue;
+['freeUsers','paidUsers','premiumPrice','proUsers','proPrice'].forEach(id=>$(id).addEventListener('input',calculateRevenue));
+
+$('refresh').onclick=fetchData;$('evaluate').onclick=()=>{evaluateModels(true);save()};$('paper').onclick=paperTrade;$('reset').onclick=reset;
+$('persist').onchange=()=>{if($('persist').checked)save();else localStorage.removeItem('aipex41')};
+$('export').onclick=()=>{const rows=[['time','symbol','action','price','qty','fee','consensus','confidence'],...state.trades.map(t=>[t.time,t.symbol,t.action,t.price,t.qty,t.fee,t.consensus,t.conf])];download('aipex-v4-1-paper-trades.csv',rows.map(r=>r.join(',')).join('\n'),'text/csv')};
+$('downloadState').onclick=()=>download('aipex-v4-1-report.json',JSON.stringify({trades:state.trades,notes:state.notes,models:state.models,price:state.price,equity:state.cash+state.units*(state.price||0)},null,2),'application/json');
+let timer=null;$('auto').onchange=()=>{if(timer)clearInterval(timer);timer=$('auto').checked?setInterval(fetchData,60000):null;if(timer)fetchData()};
+loadSaved();state.models=getPredictions();render();renderExperiment();
+</script></body></html>
